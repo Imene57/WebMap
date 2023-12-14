@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;500;600;700&display=swap');
+
+:root{
+	--primarycolor:  #3ee2ff;
+	--secondcolor: #08131f;
+	--lightcolor: #F0F0F0;
+	--bgcolor1:  #161616;
+	--bgcolor2:  #353535;
+	--bgcolorhover:#44423c;
+	--bgcolorhover2:#24231f;
+}
+
+* {
+    margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+html{
+	font-family: 'Josefin Sans', sans-serif;
+	font-size: 10px;
+	color:var(--lightcolor);
+}
+h1{
+	font-size: 4.65rem;
+	margin: 1.7rem 0;
+}
+
+h2{
+	font-size: 2.5rem;
+	letter-spacing: 0.12rem;
+	cursor: pointer;
+}
+h3{
+	font-size: 1.5rem;
+}
+
+h4{
+	font-size: 1.25rem;
+	letter-spacing: 0.12rem;
+}
+h5{
+	font-size: 1.8rem;
+	margin-bottom: 1.5rem;
+	letter-spacing: 2px;
+}
+
+span{
+	font-weight:600;
+}
+p{
+	color: var(--lightcolor);
+	letter-spacing: 1px;
+	line-height: 2.5rem;
+	font-size: 1.4rem;
+}
+/* Nav */
+.navbar{
+	height: 8rem;
+	background-color: var(--secondcolor);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-bottom: 1px solid white;
+}
+.navbar .title{
+	font-size: 3rem;
+}
+.navbar .title span{
+	font-size: 1.2rem;
+}
+/* Main */
+/* Sidebar Section */
+.main{
+	display: grid;
+	grid-template-columns: 25vw 75vw;
+	height:calc(100vh - 8rem ) ;
+}
+.main .sidebar{
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	border-right: .1rem solid var(--bgcolor1);
+	background-color: var(--secondcolor);
+	position: relative;
+}
+.main .sidebar .inputfile {
+	display: none;
+}
+.main .sidebar .inputfile + label {
+    font-size: 2rem;
+	padding: .5rem 2rem;
+	margin: 3rem 5rem;
+	width: calc(100% - 10rem );
+	border-radius: 1rem;
+    font-weight: 700;
+    color: white;
+    background-color: var(--primarycolor);
+    display: inline-block;
+	text-align: center;
+	transition: background-color .2s;
+	transition: color .2s;
+	text-transform: uppercase;
+}
+.inputfile + label {
+	cursor: pointer;
+}
+.main .sidebar .inputfile:hover + label:hover{
+	background-color: var(--lightcolor);
+	color: var(--primarycolor);
+}
+.main .sidebar label span {
+	font-size: 3.5rem;
+}
+.main .sidebar .top{
+	height: 15rem;
+}
+.main .sidebar h3{
+	font-size: 2.2rem;
+	margin: 1rem;
+	text-align: center;
+	position: relative;
+}
+.main .sidebar h3::before{
+	content: "";
+	width: 35%;
+	height: .1rem;
+	background-color: var(--lightcolor);
+	position: absolute;
+	top: 50%;
+	left: 0;
+}
+.main .sidebar h3::after{
+	content: "";
+	width: 35%;
+	height: .1rem;
+	background-color: var(--lightcolor);
+	position: absolute;
+	top: 50%;
+	right: 0;
+}
+.main .sidebar .layerList{
+	display: flex;
+	flex-direction: column;
+	padding: 2rem;
+	height: calc(100% - 23rem);
+	overflow-y:auto ;
+}
+.main .sidebar .layerList .layer{
+	display: inline-flex;
+	align-items: center;
+	position: relative;
+	width: 100%;
+}
+.main .sidebar .layerList .layerGroup{
+	margin-bottom: 3rem;
+}
+.main .sidebar .layerList .layer h4{
+	margin-left: 1rem;
+	font-size: 1.5rem;
+	font-weight: 400;
+}
+.main .sidebar .layerList .layer a{
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	right: 1rem;
+	color: #17232e;
+	font-size: 1.3rem;
+	background-color: var(--lightcolor);
+	padding: .5rem 1rem;
+	text-decoration: none;
+	border-radius: .5rem;
+	text-align: center;
+	transition: background-color .2s;
+	transition: color .2s;
+}
+.main .sidebar .layerList .layer a:hover{
+	background-color: var(--primarycolor);
+	color: var(--lightcolor);
+}
+.main .mapContainer{
+	flex-grow: 1;
+}
+.main .mapContainer #map{
+	height: 100%;
+	width: 100%;
+	position: relative;
+}
+.ol-layerswitcher{
+	top: 3rem !important;
+}
+.mousePosition{
+    position:fixed;
+    top:auto;
+    right:auto;
+    bottom: 1rem;
+    left: 62.5vw;
+    transform:translateX(-50%);
+    color:var(--secondcolor);
+    border:1px solid var(--secondcolor);
+    border-radius:5px;
+    padding:.5rem 1rem;
+    background-color:#24231f80;
+    /* font-family: Verana,Verdana, Geneva, Tahoma, sans-serif; */
+    font-size: 1.5rem;
+}
+
+.li-content span {
+	color: #08131f;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

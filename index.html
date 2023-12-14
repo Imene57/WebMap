@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./libs/ol.css">
+    <link rel="stylesheet" href="./libs/ol-ext.min.css">
+    <title>Web Map</title>
+</head>
+<body>
+  <nav class="navbar">
+    <h2 class="title">Web Map</h2>
+  </nav>
+  <main class="main">
+      <section class="sidebar">
+        <div class="top">
+          <input type="file" name="file" id="file" class="inputfile" accept=" .geojson, .json, .tif, .tiff, .kml"/>
+          <label for="file"><span>+</span> Import file </label>
+        </div>
+          
+        <h3>Layers</h3>
+        <div id="layerList" class="layerList"></div>
+      </section>
+      <section class="mapContainer">
+          <div id="map" class="map"></div>
+      </section>
+  </main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="https://kit.fontawesome.com/08f65554c5.js" crossorigin="anonymous"></script>
+    <script src="./libs/jquery.min.js"></script>
+    <script src="./libs/ol.js"></script>
+    <script src="./libs/ol-ext.min.js"></script>
+    <script src="./libs/geotiff.js"></script>
+    <script src="./libs/shapefile.js"></script>
+    <script src="./libs/highlight.pack.js"></script>
+    <script src="./script.js"></script>
+</body>
+</html>
