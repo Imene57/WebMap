@@ -89,7 +89,7 @@ p{
 .main .sidebar .inputfile + label {
     font-size: 2rem;
 	padding: .5rem 2rem;
-	margin: 3rem 5rem;
+	margin: 2rem 5rem 0rem 5rem;
 	width: calc(100% - 10rem );
 	border-radius: 1rem;
     font-weight: 700;
@@ -209,7 +209,17 @@ p{
 	color: #08131f;
 }
 
-
+#pointsList{
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	right: 3.5rem;
+	color: #17232e;
+	font-size: 1.3rem;
+	background-color: var(--lightcolor);
+	padding: .5rem 1rem;
+	border-radius: .5rem;
+}
 
 
 

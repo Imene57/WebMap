@@ -51,12 +51,6 @@ function init(){
     })
     map.addControl(mousePosition)
 
-
-
-
-
-
-    
     // Add file to html
 
     const styles = [
@@ -87,7 +81,8 @@ function init(){
                 format: new ol.format.GeoJSON()
             }),
             style: styles,
-            name:name
+            name:name,
+            title: name
             
         });
         map.addLayer(vectorLayer);
@@ -101,7 +96,7 @@ function init(){
         divLayerGrp.className = 'layerGroup';
         let div = document.createElement('div');
         div.className = 'layer';
-        div.innerHTML = '<input type="checkbox" name="Layer" class="activeLayer" checked><h4>'+ fileName +'</h4><a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>'
+        div.innerHTML = '<input type="checkbox" name="'+ fileName +'" class="activeLayer" checked><h4>'+ fileName +'</h4><a href="#" class="zoom"><i class="fa-solid fa-magnifying-glass"></i></a>'
         divLayerGrp.appendChild(div);
         layerList[0].appendChild(divLayerGrp);
 
@@ -113,7 +108,7 @@ function init(){
       divLayerGrp.className = 'layerGroup';
       let div = document.createElement('div');
       div.className = 'layer';
-      div.innerHTML = '<input type="checkbox" name="Layer" class="activeLayer" checked><h4>'+ fileName +'</h4><a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>'
+      div.innerHTML = '<input type="checkbox" name="'+ fileName +'" class="activeLayer" checked><h4>'+ fileName +'</h4><a href="#" class="zoom"><i class="fa-solid fa-magnifying-glass"></i></a>'
       divLayerGrp.appendChild(div);
       layerList[0].appendChild(divLayerGrp);
 
@@ -228,13 +223,12 @@ function init(){
         .catch(error => self.removeLoadedExtent(extent))
     };
     
-    $('.inputfile').change(function(){
+    $('#file').change(function(){
         let fileInput = document.getElementsByClassName('inputfile');
         const selectedFiles = [...fileInput[0].files];
         const fileExt = selectedFiles[0].name.split('.').pop();
         const filePath = URL.createObjectURL(selectedFiles[0]);
-        console.log(fileExt)
-        if( fileExt === 'geojson'){
+        if( fileExt === 'geojson' || fileExt === 'json'){
           fetch(filePath)
             .then((res) => {
                 addVector(res.url,selectedFiles[0].name)
@@ -274,10 +268,232 @@ function init(){
     });
     
     
+    // Zoom to layer 
+    $(document).ready(function(){
+      $(document).on('click','.zoom',function(e){
+        var namelayer = e.target.previousElementSibling.previousElementSibling.innerHTML
+        const ext = namelayer.split('.').pop();
+        if(ext === 'tiff' || ext === 'tif'){
+          map.getLayers().forEach((layer)=>{
+            if(namelayer === layer.get('title')){
+              // Zoom to Image Extent
+              const tiffUrl = layer.getSource().getUrl();
+              GeoTIFF.fromUrl(tiffUrl)
+                .then(tiff => tiff.getImage()
+                  .then(image => {
+                    var bbox = image.getBoundingBox();
+                    map.getView().fit(bbox ,{ duration: 1000 });
+                  }))
+            }
+          })
+        }
+        else{
+          map.getLayers().forEach((layer)=>{
+            // getFeaturesInExtent
+            if(namelayer === layer.get('title')){
+              // Zoom to Layer Extent
+              map.getView().fit(layer.getSource().getExtent() ,{ duration: 1000 });
+            }
+          })
+        }
+        
+      })
+    })
 
+    // Activate / disactivate layer
+    $(document).ready(function(){
+      $(document).on('click','.activeLayer',function(e){
+        const namelayer = e.target.name;
+        map.getLayers().forEach((layer)=>{
+          if(namelayer === layer.get('title')){
+            layer.setVisible(e.target.checked);
+          }
+        })
+      })
+    })
 
+    // Add points file
+    function addCSV(file){
+      const features = [];
+      const fileName = file.name;
+      const layerList = document.getElementsByClassName('layerList');
+      let divLayerGrp = document.createElement('div');
+      divLayerGrp.className = 'layerGroup';
+      let div = document.createElement('div');
+      div.className = 'layer';
+      div.attributes['name'] = file.name;
+      div.innerHTML = '<input type="checkbox" name="'+file.name+'" class="activeLayer" checked><h4>'+ fileName +'</h4><select id="pointsList" name="points"><option disabled selected>ID</option></select><a href="#" class="zoom"><i class="fa-solid fa-magnifying-glass"></i></a>'
+      divLayerGrp.appendChild(div);
+  
+      var src = new ol.source.Vector({
+        wrapX: false,
+      });
+    
+      const vecStyle = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 5,
+            fill: new ol.style.Fill({ color: "green" }),
+            stroke: new ol.style.Stroke({ color: 'black', width: 2 })
+        })
+        
+      });
+      const labelStyle = new ol.style.Style({
+        text: new ol.style.Text({
+          font: '13px Calibri,sans-serif',
+          fill: new ol.style.Fill({
+            color: '#000',
+          }),
+          stroke: new ol.style.Stroke({
+            color: '#fff',
+            width: 4,
+          }),
+          offsetX:0,
+          offsetY:-13,
+        }),
+      });
+  
+      const style = [vecStyle, labelStyle];
+      const vectorLayer = new ol.layer.Vector({
+          source: src,
+          title:fileName,
+          style: function (feature) {
+            const label = feature.get('id');
+            labelStyle.getText().setText(label);
+            return style;
+          },
+          
+      });
+      var reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = function(event){
+        var csvData= event.target.result;
+        var rowData = csvData.split('\n');
+        var select = $('#pointsList')[0];
+        console.log(select)
+        for(let i = 1;i<rowData.length; i++){
+          var colData = rowData[i].split(';');
+          if ( colData[0] !== "" && colData[1] !== "" && colData[2] !== ""){
+            var option = document.createElement("option");
+            option.value = colData[0];
+            option.text = colData[0];
+            select.add(option);
+  
+            src.addFeature(new ol.Feature({
+              id:colData[0],
+              geometry: new ol.geom.Point(ol.proj.fromLonLat([parseFloat(colData[1]),parseFloat(colData[2])]))
+            }))
+      
+          }
+        }
+        map.addLayer(vectorLayer);
+      }
+  
+      
+      layerList[0].appendChild(divLayerGrp);
+  }
+  
+  function addTXT(file){
+    const fileName = file.name;
+    const layerList = document.getElementsByClassName('layerList');
+    let divLayerGrp = document.createElement('div');
+    divLayerGrp.className = 'layerGroup';
+    let div = document.createElement('div');
+    div.className = 'layer';
+    div.attributes['name'] = file.name;
+    div.innerHTML = '<input type="checkbox" name="'+file.name+'" class="activeLayer" checked><h4>'+ fileName +'</h4><select id="pointsList" name="points"><option disabled selected>ID</option></select><a href="#" class="zoom"><i class="fa-solid fa-magnifying-glass"></i></a>'
+    divLayerGrp.appendChild(div);
+  
+    var src = new ol.source.Vector({
+      wrapX: false,
+    });
+  
+    const vecStyle = new ol.style.Style({
+      image: new ol.style.Circle({
+          radius: 5,
+          fill: new ol.style.Fill({ color: "red" }),
+          stroke: new ol.style.Stroke({ color: 'black', width: 2 })
+      })
+      
+    });
+    const labelStyle = new ol.style.Style({
+      text: new ol.style.Text({
+        font: '13px Calibri,sans-serif',
+        fill: new ol.style.Fill({
+          color: '#000',
+        }),
+        stroke: new ol.style.Stroke({
+          color: '#fff',
+          width: 4,
+        }),
+        offsetX:0,
+        offsetY:-13,
+      }),
+    });
+    const style = [vecStyle, labelStyle];
+    const vectorLayer = new ol.layer.Vector({
+        source: src,
+        title:fileName,
+        style: function (feature) {
+          const label = feature.get('id');
+          labelStyle.getText().setText(label);
+          return style;
+        },
+        
+    });
+    var reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function(event){
+      var txtData= event.target.result;
+      var rowData = txtData.split('\n');
+      var select = $('#pointsList')[0];
+      for(let i = 1;i<rowData.length; i++){
+        var colData = rowData[i].split('\t');
+        if ( colData[0] !== "" && colData[1] !== "" && colData[2] !== ""){
+          var option = document.createElement("option");
+          option.value = colData[0];
+          option.text = colData[0];
+          
+          select.add(option);
+  
+          src.addFeature(new ol.Feature({
+            id:colData[0],
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([parseFloat(colData[1]),parseFloat(colData[2])]))
+          }))
+          
+        }
+      }
+      map.addLayer(vectorLayer);
+    }
 
+    layerList[0].appendChild(divLayerGrp);
+  }
+    $('#points').change(function(){
+      let pointsFileInput = document.getElementById('points');
+      const fileExt = pointsFileInput.files[0].name.split('.').pop();
+      if( fileExt === 'csv'){
+        addCSV(pointsFileInput.files[0]);
+      }
+      else if ( fileExt === 'txt'){
+        addTXT(pointsFileInput.files[0]);
+      }
+    });
 
+    // Zoom to Point
+    $(document).ready(function(){
+      $(document).on('change','#pointsList',function(e){
+        var layers = map.getLayers();
+        console.log(e.target.previousElementSibling.innerHTML)
+        layers.forEach((layer)=>{
+          if(layer.get('title')=== e.target.previousElementSibling.innerHTML){
+            layer.getSource().getFeatures().forEach((feat)=>{
+              if(feat.get('id') === e.target.selectedOptions[0].value){
+                map.getView().animate({center:feat.getGeometry().getCoordinates(),zoom:13, duration: 2000 })
+              }
+            })
+          }
+        })
+      })
+    })
 
 
 
