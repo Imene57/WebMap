@@ -368,8 +368,7 @@ function init(){
       reader.onload = function(event){
         var csvData= event.target.result;
         var rowData = csvData.split('\n');
-        var select = $('#pointsList')[0];
-        console.log(select)
+        var select = divLayerGrp.getElementsByTagName('select')[0]
         for(let i = 1;i<rowData.length; i++){
           var colData = rowData[i].split(';');
           if ( colData[0] !== "" && colData[1] !== "" && colData[2] !== ""){
@@ -445,7 +444,7 @@ function init(){
     reader.onload = function(event){
       var txtData= event.target.result;
       var rowData = txtData.split('\n');
-      var select = $('#pointsList')[0];
+      var select = divLayerGrp.getElementsByTagName('select')[0]
       for(let i = 1;i<rowData.length; i++){
         var colData = rowData[i].split('\t');
         if ( colData[0] !== "" && colData[1] !== "" && colData[2] !== ""){
@@ -453,7 +452,7 @@ function init(){
           option.value = colData[0];
           option.text = colData[0];
           
-          select.add(option);
+          select.appendChild(option);
   
           src.addFeature(new ol.Feature({
             id:colData[0],
