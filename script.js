@@ -224,7 +224,7 @@ function init(){
     };
     
     $('#file').change(function(){
-        let fileInput = document.getElementsByClassName('inputfile');
+        let fileInput = document.getElementsByID('file');
         const selectedFiles = [...fileInput[0].files];
         const fileExt = selectedFiles[0].name.split('.').pop();
         const filePath = URL.createObjectURL(selectedFiles[0]);
